@@ -24,8 +24,7 @@ namespace Watchdog.Worker.Channels
             services.AddTransient<Startup>();
             
             //Instance ID
-            services.AddSingleton<IInstanceIdGenerator<IApi<Deal>>, InstanceIdGenerator<IApi<Deal>>>();
-            services.AddSingleton<IInstanceIdGenerator<DealWatcher<Deal>>, InstanceIdGenerator<DealWatcher<Deal>>>();
+            services.AddSingleton(typeof(IInstanceIdGenerator<>), typeof(InstanceIdGenerator<>));
             
             //API
             services.AddSingleton<IMT5Api, MT5Api>();

@@ -33,7 +33,6 @@ namespace Watchdog.App.Producer
             Guard.Against.Null(item, nameof(item));
             
             _queue.Enqueue(item);
-            //_logger.LogInformation($"Queued {item.ToString()}");
         }
 
         public bool TryDequeue(out T result)

@@ -8,7 +8,6 @@ using Ardalis.GuardClauses;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Watchdog.App.Abstractions;
-using Watchdog.App.Api;
 using Watchdog.App.Model;
 
 namespace Watchdog.Worker.Core
@@ -29,15 +28,14 @@ namespace Watchdog.Worker.Core
             _appOptions = appOptions;
         }
 
-        public IEnumerable<ValueTask> StartProducers(
+        public IEnumerable<Task> StartProducers(
             Channel<Deal> apiChannel,
             CancellationToken cancellationToken)
         {
-            var instanceId = 1;
             var producerTasks = _appOptions
                 .Servers
-                .Select(serverIp => CreateProducer(serverIp, apiChannel.Writer, instanceId++)
-                    .BeginProduceDealsFromApi(cancellationToken))
+                .Select(serverIp => CreateProducer(serverIp, apiChannel.Writer)
+                    .BeginProduceDealsFromApi(cancellationToken).AsTask())
                 .ToArray();
             
             foreach (var task in producerTasks)
@@ -50,8 +48,7 @@ namespace Watchdog.Worker.Core
 
         private ApiProducer<Deal> CreateProducer(
             string serverIp,
-            ChannelWriter<Deal> apiWriter,
-            int instanceId)
+            ChannelWriter<Deal> apiWriter)
         {
             var connectionConfig = new ConnectionConfig(
                 serverIp, 
@@ -59,12 +56,13 @@ namespace Watchdog.Worker.Core
                 _appOptions.Password);
             var api = _serviceProvider.GetService<IApi<Deal>>();
             var logger = _serviceProvider.GetService<ILogger<ApiProducer<Deal>>>();
+            var instanceIdGenerator = _serviceProvider.GetService<IInstanceIdGenerator<ApiProducer<Deal>>>();
             var producer = new ApiProducer<Deal>(
                 apiWriter,
                 api,
                 connectionConfig,
-                instanceId,
-                logger);
+                logger,
+                instanceIdGenerator);
 
             return producer;
         }

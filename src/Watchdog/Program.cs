@@ -23,13 +23,14 @@ namespace Watchdog
         private const int ErrorExitCode = -1;
 
 
-        public static async Task<int> Main(string[] args)
+        public static Task<int> Main(string[] args)
         {
             SetExceptionHandlers();
-            return await RunAsync(args);
+            
+            return RunAsync(args);
         }
 
-        private static async ValueTask<int> RunAsync(IEnumerable<string> args)
+        private static async Task<int> RunAsync(IEnumerable<string> args)
         {
             var result = await Parser.Default
                  .ParseArguments<Options>(args)

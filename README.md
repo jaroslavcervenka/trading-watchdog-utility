@@ -28,7 +28,7 @@ Windows performance counters are used for collecting performance metrics. There 
 
 ### Scaling up and down
 
-Scaling is possible via increasing/decreasing instances of components in [Startup.cs](src\Watchdog.App\Startup.cs class).
+Scaling is possible via increasing/decreasing instances of components in [Watchdog.App/Startup.cs](src/Watchdog.App/Startup.cs) class.
 
 variables:
 

@@ -23,14 +23,14 @@ namespace Watchdog.Worker.Core
             _serviceProvider = serviceProvider;
         }
         
-        public IEnumerable<ValueTask> StartWatchers(
+        public IEnumerable<Task> StartWatchers(
             Channel<Deal> jobChannel, 
             int watchersCount, 
             CancellationToken cancellationToken)
         {
             var watcherTasks = Enumerable.Range(1, watchersCount)
                 .Select(i => 
-                    CreateWatcher(jobChannel.Reader).BeginConsumeAsync(cancellationToken)
+                    CreateWatcher(jobChannel.Reader).BeginConsumeAsync(cancellationToken).AsTask()
                 )
                 .ToArray();
 

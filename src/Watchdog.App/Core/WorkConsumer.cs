@@ -21,18 +21,18 @@ namespace Watchdog.Worker.Core
             ChannelWriter<T> jobWriter,
             IWorkQueue<T> workQueue,
             ILogger<WorkConsumer<T>> logger,
-            int instanceId)
+            IInstanceIdGenerator<WorkConsumer<T>> instanceIdGenerator)
         {
             Guard.Against.Null(apiReader, nameof(apiReader));
             Guard.Against.Null(workQueue, nameof(workQueue));
-            Guard.Against.NegativeOrZero(instanceId, nameof(instanceId));
             Guard.Against.Null(logger, nameof(logger));
+            Guard.Against.Null(instanceIdGenerator, nameof(instanceIdGenerator));
 
             _apiReader = apiReader;
             _jobWriter = jobWriter;
             _workQueue = workQueue;
             _logger = logger;
-            InstanceId = instanceId;
+            InstanceId = instanceIdGenerator.GetNewId();
         }
         
         public async ValueTask BeginConsumeAsync(CancellationToken cancellationToken = default)
@@ -40,11 +40,7 @@ namespace Watchdog.Worker.Core
             while (!cancellationToken.IsCancellationRequested)
             {
                 var deal = await _apiReader.ReadAsync(cancellationToken).ConfigureAwait(false);
-                //_logger.LogInformation($"{InstanceId}: read {deal.ToString()}");
-                
                 await _jobWriter.WriteAsync(deal, cancellationToken);
-                //_logger.LogInformation($"{InstanceId}: write {deal.ToString()}");
-                
                 await Task
                     .Run(() => _workQueue.Cleanup(deal), cancellationToken)
                     .ConfigureAwait(false);

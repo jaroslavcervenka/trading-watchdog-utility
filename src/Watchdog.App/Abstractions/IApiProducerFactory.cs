@@ -8,7 +8,7 @@ namespace Watchdog.App.Abstractions
 {
     public interface IApiProducerFactory
     {
-        IEnumerable<ValueTask> StartProducers(
+        IEnumerable<Task> StartProducers(
             Channel<Deal> apiChannel,
             CancellationToken cancellationToken);
     }

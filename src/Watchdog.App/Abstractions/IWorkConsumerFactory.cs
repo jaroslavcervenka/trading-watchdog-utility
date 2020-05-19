@@ -8,7 +8,7 @@ namespace Watchdog.App.Abstractions
 {
     public interface IWorkConsumerFactory
     {
-        IEnumerable<ValueTask> StartConsumers(
+        IEnumerable<Task> StartConsumers(
             Channel<Deal> apiChannel,
             Channel<Deal> jobChannel,
             int consumersCount,

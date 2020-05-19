@@ -35,7 +35,7 @@ namespace Watchdog.App
         {
             var apiChannel = Channel.CreateUnbounded<Deal>();
             var jobChannel = Channel.CreateUnbounded<Deal>();
-            var tasks = new List<ValueTask>(_watcherFactory.StartWatchers(
+            var tasks = new List<Task>(_watcherFactory.StartWatchers(
                                                             jobChannel, 
                                                             WatchersCount,
                                                             cancellationToken));
@@ -45,9 +45,8 @@ namespace Watchdog.App
                                                             ConsumersCount, 
                                                             cancellationToken));
             tasks.AddRange(_producerFactory.StartProducers(apiChannel, cancellationToken));
-
-            //TODO: wait for all ValueTask instead of Task.Delay
-            await Task.Delay(50000000);
+            
+            await Task.WhenAll(tasks);
         }
     }
 }

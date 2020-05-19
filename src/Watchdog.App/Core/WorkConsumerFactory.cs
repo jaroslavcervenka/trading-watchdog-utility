@@ -23,15 +23,15 @@ namespace Watchdog.Worker.Core
             _serviceProvider = serviceProvider;
         }
         
-        public IEnumerable<ValueTask> StartConsumers(
+        public IEnumerable<Task> StartConsumers(
             Channel<Deal> apiChannel, 
             Channel<Deal> jobChannel, 
             int consumersCount,
             CancellationToken cancellationToken)
         {
             var consumerTasks = Enumerable.Range(1, consumersCount)
-                .Select(i => CreateConsumer(apiChannel.Reader, jobChannel.Writer, i)
-                    .BeginConsumeAsync(cancellationToken))
+                .Select(i => CreateConsumer(apiChannel.Reader, jobChannel.Writer)
+                    .BeginConsumeAsync(cancellationToken).AsTask())
                 .ToArray();
 
             foreach (var task in consumerTasks)
@@ -44,18 +44,18 @@ namespace Watchdog.Worker.Core
 
         private WorkConsumer<Deal> CreateConsumer(
             ChannelReader<Deal> apiReader,
-            ChannelWriter<Deal> jobWriter,
-            int instanceId
+            ChannelWriter<Deal> jobWriter
             )
         {
             var workQueue = _serviceProvider.GetService<IWorkQueue<Deal>>();
             var logger = _serviceProvider.GetService<ILogger<WorkConsumer<Deal>>>();
+            var instanceIdGenerator = _serviceProvider.GetService<IInstanceIdGenerator<WorkConsumer<Deal>>>();
             var consumer = new WorkConsumer<Deal>(
                 apiReader,
                 jobWriter,
                 workQueue,
                 logger,
-                instanceId);
+                instanceIdGenerator);
             
             return consumer;
         }

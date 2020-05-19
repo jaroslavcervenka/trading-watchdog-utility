@@ -50,13 +50,11 @@ namespace Watchdog.Worker.Core
                 
                 DetectSimilarDeals(deal);
                 _workQueue.Enqueue(deal);
-                //_logger.LogInformation($"WATCHER QUEUE {deal.ToString()}");
             }
         }
         
         private void DetectSimilarDeals(T newDeal)
         {
-            //_logger.LogInformation($"{InstanceId} Detect deal ({newDeal.ToString()})");
             var similarDeals = new List<T>();
             
             foreach (var deal in _workQueue)

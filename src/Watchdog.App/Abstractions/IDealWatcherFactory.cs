@@ -8,7 +8,7 @@ namespace Watchdog.App.Abstractions
 {
     public interface IDealWatcherFactory
     {
-        IEnumerable<ValueTask> StartWatchers(
+        IEnumerable<Task> StartWatchers(
             Channel<Deal> jobChannel,
             int watchersCount,
             CancellationToken cancellationToken);

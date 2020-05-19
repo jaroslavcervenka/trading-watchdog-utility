@@ -66,7 +66,6 @@ namespace Watchdog.App.Api
                 CurrentUnixTimeSeconds());
 
             DealAdded.Invoke(this, new DealAddEventArgs<Deal>(deal));
-            //_logger.LogInformation($"API {InstanceId} {deal.ToString()}");
         }
 
         public void Disconnect()

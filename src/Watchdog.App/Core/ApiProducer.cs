@@ -21,26 +21,6 @@ namespace Watchdog.Worker.Core
         private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(0);
         private readonly ConcurrentQueue<T> _queue = new ConcurrentQueue<T>();
 
-        public ApiProducer(
-            ChannelWriter<T> apiWriter,
-            IApi<T> api,
-            ConnectionConfig connectionConfig,
-            int instanceId,
-            ILogger<ApiProducer<T>> logger)
-        {
-            Guard.Against.Null(api, nameof(api));
-            Guard.Against.Null(apiWriter, nameof(apiWriter));
-            Guard.Against.Null(connectionConfig, nameof(connectionConfig));
-            Guard.Against.NegativeOrZero(instanceId, nameof(instanceId));
-            Guard.Against.Null(logger, nameof(logger));
-
-            _api = api;
-            _apiWriter = apiWriter;
-            _connectionConfig = connectionConfig;
-            InstanceId = instanceId;
-            _logger = logger;
-        }
-
         public async ValueTask BeginProduceDealsFromApi(CancellationToken cancellationToken = default)
         {
             cancellationToken.Register(Disconnect);
@@ -58,13 +38,33 @@ namespace Watchdog.Worker.Core
                         _logger.LogError("Getting null deal value.");
                         continue;
                     }
-
-                    _logger.LogInformation($"{InstanceId}: read {deal.ToString()}");
+                    
                     await _apiWriter.WriteAsync(deal, cancellationToken).ConfigureAwait(false);
                 }
             }
         }
-        
+
+        public ApiProducer(
+            ChannelWriter<T> apiWriter,
+            IApi<T> api,
+            ConnectionConfig connectionConfig,
+            ILogger<ApiProducer<T>> logger,
+            IInstanceIdGenerator<ApiProducer<T>> instanceIdGenerator
+        )
+        {
+            Guard.Against.Null(api, nameof(api));
+            Guard.Against.Null(apiWriter, nameof(apiWriter));
+            Guard.Against.Null(connectionConfig, nameof(connectionConfig));
+            Guard.Against.Null(logger, nameof(logger));
+            Guard.Against.Null(instanceIdGenerator, nameof(instanceIdGenerator));
+            
+            _api = api;
+            _apiWriter = apiWriter;
+            _connectionConfig = connectionConfig;
+            _logger = logger;
+            InstanceId = instanceIdGenerator.GetNewId();
+        }
+
         private void AddHandler()
         {
             _api.DealAdded += OnDealAdded;

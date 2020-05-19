@@ -10,9 +10,9 @@ namespace Watchdog
         
         [Option('l', "login", Required = true, HelpText = "Server login.")]
         public ulong Login { get; set; }
-        
+
         [Option('p', "password", Required = true, HelpText = "Server password.")]
-        public string Password { get; set; }
+        public string Password { get; set; } = "";
         
         [Option('r', "ratio", Required = true, HelpText = "Trade volume to balance ratio.")]
         public decimal Ratio { get; set; }

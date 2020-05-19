@@ -14,6 +14,9 @@ namespace Watchdog.App
         private readonly IWorkConsumerFactory _consumerFactory;
         private readonly IDealWatcherFactory _watcherFactory;
         
+        private const int ConsumersCount = 1;
+        private const int WatchersCount = 2;
+        
         public Startup(
             IApiProducerFactory producerFactory,
             IWorkConsumerFactory consumerFactory,
@@ -30,19 +33,16 @@ namespace Watchdog.App
 
         public async Task RunAsync(CancellationToken cancellationToken = default)
         {
-            const int consumersCount = 1;
-            const int watchersCount = 2;
-            
             var apiChannel = Channel.CreateUnbounded<Deal>();
             var jobChannel = Channel.CreateUnbounded<Deal>();
             var tasks = new List<ValueTask>(_watcherFactory.StartWatchers(
                                                             jobChannel, 
-                                                            watchersCount,
+                                                            WatchersCount,
                                                             cancellationToken));
             tasks.AddRange(_consumerFactory.StartConsumers(
                                                             apiChannel, 
                                                             jobChannel, 
-                                                            consumersCount, 
+                                                            ConsumersCount, 
                                                             cancellationToken));
             tasks.AddRange(_producerFactory.StartProducers(apiChannel, cancellationToken));
 

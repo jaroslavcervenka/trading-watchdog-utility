@@ -26,7 +26,6 @@ namespace Watchdog
         public static async Task<int> Main(string[] args)
         {
             SetExceptionHandlers();
-            Logger.Configure.CreateLogger();
             return await RunAsync(args);
         }
 
@@ -41,6 +40,8 @@ namespace Watchdog
 
         private static async Task<int> RunAppAsync(Options options)
         {
+            Logger.Configure.CreateLogger(options.Verbose);
+            
             Factory? performanceCountersFactory = null;
             var tokenSource = new CancellationTokenSource();
             try

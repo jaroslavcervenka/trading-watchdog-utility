@@ -53,8 +53,13 @@ namespace Watchdog.Worker.Core
                 
                 while (_queue.TryDequeue(out var deal))
                 {
-                    _logger.LogInformation($"{InstanceId}: read {deal.ToString()}");
+                    if (deal == null)
+                    {
+                        _logger.LogError("Getting null deal value.");
+                        continue;
+                    }
 
+                    _logger.LogInformation($"{InstanceId}: read {deal.ToString()}");
                     await _apiWriter.WriteAsync(deal, cancellationToken).ConfigureAwait(false);
                 }
             }

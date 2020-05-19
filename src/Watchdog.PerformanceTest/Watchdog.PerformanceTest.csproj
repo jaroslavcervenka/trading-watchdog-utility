@@ -274,7 +274,6 @@
         <Compile Include="Helpers\AsyncProducer\AsyncProducerConsumer.cs" />
         <Compile Include="Helpers\AsyncProducer\TestApi.cs" />
         <Compile Include="Helpers\NullLogger.cs" />
-        <Compile Include="ProducerTests.cs" />
         <Compile Include="Program.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>

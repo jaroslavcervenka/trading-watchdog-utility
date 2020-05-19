@@ -91,10 +91,8 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="AsyncProducerTests.cs" />
         <Compile Include="Comparer\DealComparerTests.cs" />
         <Compile Include="Model\DealTests.cs" />
-        <Compile Include="ProducerTests.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
     </ItemGroup>
     <ItemGroup>

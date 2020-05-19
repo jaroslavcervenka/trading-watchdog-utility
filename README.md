@@ -1,3 +1,5 @@
+[![Build Status](https://dev.azure.com/renatic/Trade%20watchdog/_apis/build/status/jaroslavcervenka.trading-watchdog-utility?branchName=master)](https://dev.azure.com/renatic/Trade%20watchdog/_build/latest?definitionId=1&branchName=master)
+
 # Trading watchdog utility
 
 A console application which monitors treading activity in real-time and log suspicious behavior.

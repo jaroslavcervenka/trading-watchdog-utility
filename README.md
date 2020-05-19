@@ -33,7 +33,7 @@ variables:
 
 ### Workflow scheme
 
-![Watchdog app cheme](docs\files\img\app-scheme.png)
+![Watchdog app cheme](docs/files/img/app-scheme.png)
 
 ### Technologies
 

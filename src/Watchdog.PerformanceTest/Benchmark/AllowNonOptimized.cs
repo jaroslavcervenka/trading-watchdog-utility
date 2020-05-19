@@ -1,0 +1,21 @@
+using System.Linq;
+using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Diagnosers;
+using BenchmarkDotNet.Validators;
+
+namespace Watchdog.PerformanceTest.Benchmark
+{
+    public class AllowNonOptimized : ManualConfig
+    {
+        public AllowNonOptimized()
+        {
+            AddValidator(JitOptimizationsValidator.DontFailOnError); // ALLOW NON-OPTIMIZED DLLS
+            
+            AddLogger(DefaultConfig.Instance.GetLoggers().ToArray()); // manual config has no loggers by default
+            AddExporter(DefaultConfig.Instance.GetExporters().ToArray()); // manual config has no exporters by default
+            AddColumnProvider(DefaultConfig.Instance.GetColumnProviders().ToArray()); // manual config has no columns by default
+            
+            AddDiagnoser(MemoryDiagnoser.Default);
+        }
+    }
+}

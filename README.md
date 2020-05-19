@@ -1,4 +1,4 @@
-# Deal watchdog utility
+# Trading watchdog utility
 
 A console application which monitors treading activity in real-time and log suspicious behavior.
 

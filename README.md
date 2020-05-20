@@ -4,6 +4,8 @@
 
 A console application which monitors treading activity in real-time and log suspicious behavior.
 
+Trading servers can have some restrictions, some users can try to bypass these restrictions by using multiple accounts with different names (of some relatives for example) and on multiple servers. We need to detect such behavior in real-time. Check new deals and if two or more similar deals exist, log the information. Similar deals are deals where open time differs no more than one second, currency pair is the same and the difference in volume-to-balance ratio is no more than 5%. If such deals are detected log info including accounts and servers where the deals were detected.
+
 ## Usage
 
 Start new command line window with elevated privileges due to installation of performance counters.

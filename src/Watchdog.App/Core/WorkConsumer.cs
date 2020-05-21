@@ -37,8 +37,13 @@ namespace Watchdog.Worker.Core
         
         public async ValueTask BeginConsumeAsync(CancellationToken cancellationToken = default)
         {
-            while (!cancellationToken.IsCancellationRequested)
+            while (true)
             {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+
                 var deal = await _apiReader.ReadAsync(cancellationToken).ConfigureAwait(false);
                 await _jobWriter.WriteAsync(deal, cancellationToken);
                 await Task

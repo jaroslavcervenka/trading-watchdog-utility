@@ -26,7 +26,6 @@ namespace Watchdog
         public static Task<int> Main(string[] args)
         {
             SetExceptionHandlers();
-            
             return RunAsync(args);
         }
 

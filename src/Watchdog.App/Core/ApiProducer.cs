@@ -21,29 +21,6 @@ namespace Watchdog.Worker.Core
         private readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(0);
         private readonly ConcurrentQueue<T> _queue = new ConcurrentQueue<T>();
 
-        public async ValueTask BeginProduceDealsFromApi(CancellationToken cancellationToken = default)
-        {
-            cancellationToken.Register(Disconnect);
-            AddHandler();
-            _api.Connect(_connectionConfig);
-
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                await _semaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
-                
-                while (_queue.TryDequeue(out var deal))
-                {
-                    if (deal == null)
-                    {
-                        _logger.LogError("Getting null deal value.");
-                        continue;
-                    }
-                    
-                    await _apiWriter.WriteAsync(deal, cancellationToken).ConfigureAwait(false);
-                }
-            }
-        }
-
         public ApiProducer(
             ChannelWriter<T> apiWriter,
             IApi<T> api,
@@ -63,6 +40,40 @@ namespace Watchdog.Worker.Core
             _connectionConfig = connectionConfig;
             _logger = logger;
             InstanceId = instanceIdGenerator.GetNewId();
+        }
+
+        public async ValueTask BeginProduceDealsFromApi(CancellationToken cancellationToken = default)
+        {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+            
+            AddHandler();
+            _api.Connect(_connectionConfig);
+
+            while (true)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    Disconnect();
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+
+                await _semaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
+                
+                while (_queue.TryDequeue(out var deal))
+                {
+                    if (deal == null)
+                    {
+                        _logger.LogError("Getting null deal value.");
+                        continue;
+                    }
+                    
+                    await _apiWriter.WriteAsync(deal, cancellationToken).ConfigureAwait(false);
+                }
+                
+            }
         }
 
         private void AddHandler()

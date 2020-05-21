@@ -1,9 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using BenchmarkDotNet.Attributes;
-using Watchdog.PerformanceTest.Helpers.AsyncProducer;
-using Watchdog.App.Producer;
+﻿using BenchmarkDotNet.Attributes;
 
 namespace Watchdog.PerformanceTest
 {

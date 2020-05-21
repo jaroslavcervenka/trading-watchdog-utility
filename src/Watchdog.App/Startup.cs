@@ -33,6 +33,11 @@ namespace Watchdog.App
 
         public async Task RunAsync(CancellationToken cancellationToken = default)
         {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return;
+            }
+
             var apiChannel = Channel.CreateUnbounded<Deal>();
             var jobChannel = Channel.CreateUnbounded<Deal>();
             var tasks = new List<Task>(_watcherFactory.StartWatchers(

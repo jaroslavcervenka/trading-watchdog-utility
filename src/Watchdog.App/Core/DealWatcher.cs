@@ -44,8 +44,13 @@ namespace Watchdog.Worker.Core
 
         public async ValueTask BeginConsumeAsync(CancellationToken cancellationToken = default)
         {
-            while (!cancellationToken.IsCancellationRequested)
+            while (true)
             {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+
                 var deal = await _jobReader.ReadAsync(cancellationToken).ConfigureAwait(false);
                 
                 DetectSimilarDeals(deal);

@@ -48,7 +48,7 @@ namespace Watchdog.Worker.Core
             {
                 if (cancellationToken.IsCancellationRequested)
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
+                    return;
                 }
 
                 var deal = await _jobReader.ReadAsync(cancellationToken).ConfigureAwait(false);

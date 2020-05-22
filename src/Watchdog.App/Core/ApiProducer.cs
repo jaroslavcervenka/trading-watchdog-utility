@@ -57,7 +57,7 @@ namespace Watchdog.Worker.Core
                 if (cancellationToken.IsCancellationRequested)
                 {
                     Disconnect();
-                    cancellationToken.ThrowIfCancellationRequested();
+                    return;
                 }
 
                 await _semaphoreSlim.WaitAsync(cancellationToken).ConfigureAwait(false);
